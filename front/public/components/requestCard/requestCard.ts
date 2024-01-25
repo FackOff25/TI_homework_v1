@@ -31,9 +31,8 @@ export default class RequestCard extends BasicComponent {
         let subscription: Subscription;
 
         const assignerInput = (this.root.querySelector('#emploee_form')! as HTMLSelectElement);
-        const equipmentInput = (this.root.querySelector('#equipment_form')! as HTMLSelectElement);
-        const dateFromInput = (this.root.querySelector('#request_card__from_date')! as HTMLInputElement);
-        const dateToInput = (this.root.querySelector('#request_card__to_date')! as HTMLInputElement);
+        const eqTypeInput = (this.root.querySelector('#equipment_form')! as HTMLSelectElement);
+        const addressInput = (this.root.querySelector('#address_input')! as HTMLInputElement);
         
         const closeButton = this.root.querySelector('#request_card__cross')!;
         subscription = {
@@ -48,22 +47,16 @@ export default class RequestCard extends BasicComponent {
         if (this.data.info === undefined) {
             submitEvent = () => {
                 const assigner = assignerInput.options[assignerInput.selectedIndex].getAttribute("data-em-id")!;
-                const equipment = equipmentInput.options[equipmentInput.selectedIndex].getAttribute("data-eq-id")!;
-                const dateFrom = dateFromInput.value;
-                const dateTo = dateToInput.value;
+                const reqType = eqTypeInput.options[eqTypeInput.selectedIndex].getAttribute("data-eq-id")!;
+                const reqTypeWeight = eqTypeInput.options[eqTypeInput.selectedIndex].getAttribute("data-eq-weight")!;
+                const address = addressInput.value;
 
                 let invalid = false;
-                if (dateFrom === "") {
-                    Events.makeInvalid(dateFromInput, "Выберите начало срока заявки");
+                if (address === "") {
+                    Events.makeInvalid(addressInput, "Введите адрес");
                     invalid = true;
                 } else {
-                    Events.makeValid(dateFromInput);
-                }
-                if (dateTo === "") {
-                    Events.makeInvalid(dateToInput, "Выберите конец срока заявки");
-                    invalid = true;
-                } else {
-                    Events.makeValid(dateToInput);
+                    Events.makeValid(addressInput);
                 }
                 if (invalid) {
                     return;
@@ -77,12 +70,12 @@ export default class RequestCard extends BasicComponent {
                         Surname: "",
                         Fathername: ""
                     },
-                    Equipment: {
-                        ID: parseInt(equipment),
-                        Name: ""
+                    reqType: {
+                        ID: parseInt(reqType),
+                        Name: "",
+                        Weight: parseInt(reqTypeWeight),
                     },
-                    From: new Date(dateFrom),
-                    To: new Date(dateTo),
+                    address: address,
                 }).then(() => {
                     Events.openAlertMessage("Запрос успешно добавлен", "ОК", () => {
                         eventBus.closeEvent();
@@ -91,7 +84,7 @@ export default class RequestCard extends BasicComponent {
                 }).catch((err) => {
                     console.log(err);
                     if (err === 403){
-                        Events.openAlertMessage("Время заявки пересекается с другой заявкой на это оборудование", "ОК", Events.closeAlertMessage);
+                        Events.openAlertMessage("Превышена сложность заявок для сотрудника", "ОК", Events.closeAlertMessage);
                     }else{
                         Events.openAlertMessage("Не удалось добавить запрос", "ОК", Events.closeAlertMessage);
                     }
@@ -100,9 +93,20 @@ export default class RequestCard extends BasicComponent {
         }else{
             submitEvent = () => {
                 const assigner = assignerInput.options[assignerInput.selectedIndex].getAttribute("data-em-id")!;
-                const equipment = equipmentInput.options[equipmentInput.selectedIndex].getAttribute("data-eq-id")!;
-                const dateFrom = dateFromInput.value;
-                const dateTo = dateToInput.value;
+                const reqType = eqTypeInput.options[eqTypeInput.selectedIndex].getAttribute("data-eq-id")!;
+                const reqTypeWeight = eqTypeInput.options[eqTypeInput.selectedIndex].getAttribute("data-eq-weight")!;
+                const address = addressInput.value;
+
+                let invalid = false;
+                if (address === "") {
+                    Events.makeInvalid(addressInput, "Введите адрес");
+                    invalid = true;
+                } else {
+                    Events.makeValid(addressInput);
+                }
+                if (invalid) {
+                    return;
+                }
 
                 Queries.updateRequest({
                     ID: this.data.info!.ID,
@@ -112,12 +116,12 @@ export default class RequestCard extends BasicComponent {
                         Surname: "",
                         Fathername: ""
                     },
-                    Equipment: {
-                        ID: parseInt(equipment),
-                        Name: ""
+                    reqType: {
+                        ID: parseInt(reqType),
+                        Name: "",
+                        Weight: parseInt(reqTypeWeight),
                     },
-                    From: new Date(dateFrom),
-                    To: new Date(dateTo),
+                    address: address,
                 }).then(() => {
                     Events.openAlertMessage("Запрос успешно обновлён", "ОК", () => {
                         eventBus.closeEvent();
@@ -125,7 +129,7 @@ export default class RequestCard extends BasicComponent {
                     });
                 }).catch((err) => {
                     if (err === 403){
-                        Events.openAlertMessage("Время заявки пересекается с другой заявкой на это оборудование", "ОК", Events.closeAlertMessage);
+                        Events.openAlertMessage("Превышена сложность заявок для сотрудника", "ОК", Events.closeAlertMessage);
                     }else{
                         Events.openAlertMessage("Не удалось обновить запрос", "ОК", Events.closeAlertMessage);
                     }
@@ -137,24 +141,6 @@ export default class RequestCard extends BasicComponent {
             element: submitButton,
             event: 'click',
             listener: submitEvent,
-        }
-        this._subscribeEvent(subscription);
-
-        subscription = {
-            element: dateFromInput,
-            event: 'change',
-            listener: () => {
-                dateToInput.setAttribute("min", dateFromInput.value);
-            },
-        }
-        this._subscribeEvent(subscription);
-
-        subscription = {
-            element: dateToInput,
-            event: 'change',
-            listener: () => {
-                dateFromInput.setAttribute("max", dateToInput.value);
-            },
         }
         this._subscribeEvent(subscription);
     }

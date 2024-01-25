@@ -11,9 +11,9 @@ export default class RequestListElementView extends BasicComponentView {
         // @ts-expect-error TS(2304): Cannot find name 'Handlebars'.
         wrapper.innerHTML = Handlebars.templates['requestListElement.html']({
             ID: data.ID,
-            Name: data.Equipment.Name,
-            From: data.From.toISOString().split("T")[0],
-            To: data.To.toISOString().split("T")[0],
+            Address: data.address,
+            Type: data.reqType.Name,
+            Weight: data.reqType.Weight,
         });
         return wrapper.querySelector('div')!;
     }

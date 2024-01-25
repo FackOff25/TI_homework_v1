@@ -28,13 +28,6 @@ export default class RequestList extends BasicComponent {
             return this.root;
         }
 
-        requestList.sort((r1: RequestInfo, r2: RequestInfo) => {
-            if (r1.From > r2.From){
-                return 1;
-            }
-            return -1;
-        })
-
         requestList.forEach((request) => {
             const element = new RequestListElement(request);
             this.root.appendChild(element.render());

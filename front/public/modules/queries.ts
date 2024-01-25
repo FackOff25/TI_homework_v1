@@ -1,4 +1,4 @@
-import { EmploeeInfo, Equipment, RequestInfo } from "../common/types";
+import { EmploeeInfo, ReqType, RequestInfo } from "../common/types";
 import { Requests } from "./requests.js";
 
 export class Queries {
@@ -40,8 +40,8 @@ export class Queries {
     /**
      * Получение списка оборудования
      */
-    static async getEquipmentList(): Promise<Equipment[]> {
-        return Requests.getEquipment();
+    static async getReqTypesList(): Promise<ReqType[]> {
+        return Requests.getReqTypes();
     }
 
     /**

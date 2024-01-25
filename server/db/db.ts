@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { Emploee, EqRequest } from './types';
+import { Emploee, DbRequest } from './types';
 
 export type DB_CONFIG = {
     host: string,
@@ -125,12 +125,12 @@ export default class DB {
     //
 
     //
-    // Equipment Block
+    // Request types Block
     //
-    async getEquipment(): Promise<any[] | undefined>{
+    async getRequestTypes(): Promise<any[] | undefined>{
         try {
             const requests = await this.#dbClient?.query(
-                `select id, name from equipment;`
+                `select id, name, weight from reqType;`
             )
             return requests?.rows;
         } catch (error) {
@@ -139,7 +139,7 @@ export default class DB {
     }
 
     //
-    // End of equipment Block
+    // End of request types Block
     //
 
     //
@@ -148,29 +148,29 @@ export default class DB {
     async getRequests(code: number): Promise<any[] | undefined>{
         try {
             const requests = await this.#dbClient?.query(
-                `select request.id, request.equipment, request.date_from, request.date_to, equipment.name from request join equipment on request.equipment=equipment.id where assigner=${code};`
+                `select request.id, request.address, reqType.id as typeId, reqType.name, reqType.weight from request join reqType on request.type=reqType.id where assigner=${code};`
             )
             return requests?.rows;
         } catch (error) {
             console.error(error);
         }
     }
-
-    async getRequestsByEquipment(id: number): Promise<any[] | undefined>{
+    /*
+    async getRequestsByReqType(id: number): Promise<any[] | undefined>{
         try {
             const requests = await this.#dbClient?.query(
-                `select id, equipment, date_from, date_to from request where equipment=${id};`
+                `select id, reqType, date_from, date_to from request where equipment=${id};`
             )
             return requests?.rows;
         } catch (error) {
             console.error(error);
         }
     }
-
+    */
     async getRequest(id: number): Promise<any | undefined>{
         try {
             const request = await this.#dbClient?.query(
-                `select id, assigner, equipment, date_from, date_to from emploee where id=${id};`
+                `select request.id, request.assigner, request.address, reqType.id as typeId, reqType.name, reqType.weight from request join reqType on request.type=reqType.id where id=${id};`
             )
             return request?.rows[0];
         } catch (error) {
@@ -178,10 +178,10 @@ export default class DB {
         }
     }
     
-    async addRequest(request: EqRequest): Promise<void>{
+    async addRequest(request: DbRequest): Promise<void>{
         try {
             const result = await this.#dbClient?.query(
-                `insert into request(assigner, equipment, date_from, date_to) values(${request.assigner}, ${request.equipment}, '${request.date_from}', '${request.date_to}');`
+                `insert into request(assigner, type, address) values(${request.assigner}, ${request.type.id}, '${request.address}');`
             )
             return Promise.resolve();
         } catch (error) {
@@ -202,13 +202,13 @@ export default class DB {
         }
     }
 
-    async updateRequest(request: EqRequest): Promise<void>{
+    async updateRequest(request: DbRequest): Promise<void>{
         if (request.id === undefined) {
             return Promise.reject("no id");
         }
         try {
             const result = await this.#dbClient?.query(
-                `update request set assigner = ${request.assigner}, equipment = ${request.equipment}, date_from = '${request.date_from}', date_to = '${request.date_to}' where id=${request.id};`
+                `update request set assigner = ${request.assigner}, type = ${request.type.id}, address = '${request.address}' where id=${request.id};`
             )
             return Promise.resolve();
         } catch (error) {

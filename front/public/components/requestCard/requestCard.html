@@ -11,34 +11,12 @@
                 {{/each}}
             </select>
             <select id="equipment_form" class="select_menu">
-                {{#each equipment}}
-                <option data-eq-id={{this.ID}}>{{this.Name}}</option>
+                {{#each types}}
+                <option data-eq-id={{this.ID}} data-eq-weight={{this.Weight}}>{{this.Name}}: {{this.Weight}}</option>
                 {{/each}}
             </select>
-            <input type="date" id="request_card__from_date" name="request_card__from_date"
-                {{#if from}}
-                value="{{from}}"
-                {{/if}}
-                {{#if min_from_date_value}}
-                min="{{min_from_date_value}}"
-                {{/if}}
-                {{#if max_from_date_value}}
-                max="{{max_from_date_value}}"
-                {{/if}}
-                class="request_card__date_form"
-            />
-            <input type="date" id="request_card__to_date" name="request_card__to_date"
-                {{#if to}}
-                value="{{to}}"
-                {{/if}}
-                {{#if min_to_date_value}}
-                min="{{min_to_date_value}}"
-                {{/if}}
-                {{#if max_to_date_value}}
-                max="{{max_to_date_value}}"
-                {{/if}}
-                class="request_card__date_form"
-            />
+            <input type="text" class="emploee_card__input"
+                   placeholder="Адрес" id="address_input" value="{{address}}">
         </div>
         <input class="accent_button button horizontal_center_div" type="button" value="Сохранить" id="request_card__submit_button">
         </form>

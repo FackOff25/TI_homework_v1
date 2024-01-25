@@ -5,10 +5,15 @@ export type Emploee = {
     fathername: string,
 }
 
-export type EqRequest = {
+export type RequestType = {
+    id: number,
+    name: string,
+    weight: number,
+}
+
+export type DbRequest = {
     id?: number,
     assigner: number,
-    equipment: number,
-    date_from: string,
-    date_to: string,
+    type: RequestType,
+    address: string,
 }

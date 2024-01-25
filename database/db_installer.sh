@@ -6,9 +6,10 @@ su postgres <<EOF
 createdb  $DB_NAME;
 psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_USER_PASS';"
 
-psql -U postgres -d  $DB_NAME -c "CREATE TABLE IF NOT EXISTS equipment ( 
+psql -U postgres -d  $DB_NAME -c "CREATE TABLE IF NOT EXISTS reqType ( 
 	id			SERIAL PRIMARY KEY,
 	name		VARCHAR(45) NOT NULL,
+	weight		INTEGER
 );"
 
 psql -U postgres -d  $DB_NAME -c "CREATE TABLE IF NOT EXISTS emploee ( 
@@ -21,9 +22,8 @@ psql -U postgres -d  $DB_NAME -c "CREATE TABLE IF NOT EXISTS emploee (
 psql -U postgres -d  $DB_NAME -c "CREATE TABLE IF NOT EXISTS request ( 
 	id					SERIAL PRIMARY KEY,
 	assigner			INTEGER REFERENCES emploee(code) ON DELETE CASCADE,
-	equipment			INTEGER REFERENCES equipment(id) ON DELETE CASCADE,
-	date_from			DATE NOT NULL,
-	date_to				DATE NOT NULL
+	type				INTEGER REFERENCES reqType(id) ON DELETE CASCADE,
+	address				VARCHAR(45) NOT NULL
 );"
 
 psql -U postgres -d  $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to $DB_USER;"

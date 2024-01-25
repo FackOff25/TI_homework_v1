@@ -1,7 +1,7 @@
 import {Ajax} from "./ajax.js";
 import {
     EmploeeInfo,
-    Equipment,
+    ReqType,
     RequestInfo
 } from "../common/types";
 
@@ -12,7 +12,7 @@ const config = {
         emploeeAdd: '/queries/emploee/add',
         emploeeDelete: '/queries/emploee/delete',
         emploeeUpdate: '/queries/emploee/update',
-        equipmentList: '/queries/equipment/get/all',
+        reqTypeList: '/queries/reqType/get/all',
         requestList: '/queries/request/get/list/',
         requestAdd: '/queries/request/add',
         requestDelete: '/queries/request/delete',
@@ -132,28 +132,30 @@ export class Requests {
     }
 
     /**
-     * Запрашивает Оборудование
+     * Запрашивает типы запросов
      */
-        static getEquipment(): Promise<Equipment[]> {
+        static getReqTypes(): Promise<ReqType[]> {
             return ajax.get({
-                url: config.hrefs.equipmentList,
+                url: config.hrefs.reqTypeList,
             }).then((response) => {
                 const result = response!;
                 if (result.status !== 200) {
                     throw result.status;
                 }
-                const equipmentList: Equipment[] = [];
-                result.response.equipment.forEach((equipment: 
+                const reqTypeList: ReqType[] = [];
+                result.response.types.forEach((type: 
                     {
                         id: number,
                         name: string,
+                        weight: number
                     }) => {
-                    equipmentList.push({
-                        ID: equipment.id,
-                        Name: equipment.name,
+                    reqTypeList.push({
+                        ID: type.id,
+                        Name: type.name,
+                        Weight: type.weight
                     })
                 });;
-                return equipmentList;
+                return reqTypeList;
             });
         }
 
@@ -172,10 +174,10 @@ export class Requests {
             result.response.requests.forEach((request: 
                 {
                     id: number,
-                    equipment: number,
-                    date_from: string,
-                    date_to: string,
+                    address: string,
+                    typeid: number,
                     name: string,
+                    weight: number,
                 }) => {
                 requests.push({
                     ID: request.id,
@@ -185,12 +187,12 @@ export class Requests {
                         Surname: "",
                         Fathername: ""
                     },
-                    Equipment: {
-                        ID: request.equipment,
+                    reqType: {
+                        ID: request.typeid,
                         Name: request.name,
+                        Weight: request.weight,
                     },
-                    From: new Date(request.date_from),
-                    To: new Date(request.date_to),
+                    address: request.address,
                 })
             });;
             return requests;
@@ -204,10 +206,13 @@ export class Requests {
         return ajax.post({
             url: config.hrefs.requestAdd,
             data: {
-                equipment: request.Equipment.ID,
                 assigner: request.Assigner.ID,
-                date_from: request.From.toLocaleDateString('sv'),
-                date_to: request.To.toLocaleDateString('sv'),
+                address: request.address,
+                type: {
+                    id: request.reqType.ID,
+                    name: request.reqType.Name,
+                    weight: request.reqType.Weight,
+                }
             }
         }).then((response) => {
             const result = response!;
@@ -242,10 +247,13 @@ export class Requests {
             url: config.hrefs.requestUpdate,
             data: {
                 id: request.ID,
-                equipment: request.Equipment.ID,
                 assigner: request.Assigner.ID,
-                date_from: request.From.toLocaleDateString('sv'),
-                date_to: request.To.toLocaleDateString('sv'),
+                address: request.address,
+                type: {
+                    id: request.reqType.ID,
+                    name: request.reqType.Name,
+                    weight: request.reqType.Weight,
+                }
             }
         }).then((response) => {
             const result = response!;

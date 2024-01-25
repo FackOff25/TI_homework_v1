@@ -9,9 +9,10 @@ export type Subscription = {
     listener: EventListenerOrEventListenerObject
 }
 
-export type Equipment = {
+export type ReqType = {
     ID: number,
     Name: string,
+    Weight: number,
 }
 
 export type EmploeeInfo = {
@@ -23,10 +24,9 @@ export type EmploeeInfo = {
 
 export type RequestInfo = {
     ID: number,
-    Equipment: Equipment,
+    reqType: ReqType,
     Assigner: EmploeeInfo,
-    From: Date,
-    To: Date,
+    address: string,
 }
 
 export type Listener = () => any;

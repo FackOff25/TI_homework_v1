@@ -44,11 +44,11 @@ export default class Sidebar extends BasicComponent {
         });
 
         const emploees = await Queries.getEmploeeList();
-        const equipment = await Queries.getEquipmentList()
+        const reqTypes = await Queries.getReqTypesList()
         this.children.newRequestButton?.subscribe(() => {
             Events.makeRequestCardOverlay({
                 emploees: emploees,
-                equipment: equipment,
+                types: reqTypes,
             });
         });
     }

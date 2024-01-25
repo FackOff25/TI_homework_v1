@@ -34,7 +34,7 @@ export default class RequestListElement extends BasicComponent {
         let subscription: Subscription;
 
         const emploees = await Queries.getEmploeeList();
-        const equipment = await Queries.getEquipmentList();
+        const reqTypes = await Queries.getReqTypesList();
         
         const editButton = this.root.querySelectorAll(".request_list__element__button")[0];
         const deleteButton = this.root.querySelectorAll(".request_list__element__button")[1];
@@ -46,7 +46,7 @@ export default class RequestListElement extends BasicComponent {
                 Events.makeRequestCardOverlay({
                     info: this.request,
                     emploees: emploees,
-                    equipment: equipment,
+                    types: reqTypes,
                 });
             },
         }
