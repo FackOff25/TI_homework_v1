@@ -219,4 +219,10 @@ export class Events {
         const message = body.querySelector(".alert_prompt")!;
         body.removeChild(message);
     }
+
+    static updateWeightSum(change: number, parent?: HTMLElement){
+        const sumEl = (parent === undefined ? document.querySelector("#weight_sum")! : parent.querySelector("#weight_sum")!) as HTMLElement;
+        const curSum = parseInt(sumEl.innerText.match(/[0-9]+/)![0]);
+        sumEl.innerText = `${curSum+change}/300`;
+    }
 }

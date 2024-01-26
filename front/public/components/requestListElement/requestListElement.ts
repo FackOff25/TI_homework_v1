@@ -17,16 +17,19 @@ export type RequestListElementEventBus = {
 export default class RequestListElement extends BasicComponent {
     view: RequestListElementView;
     request: RequestInfo;
+    parent: HTMLElement;
 
-    constructor(request: RequestInfo) {
+    constructor(request: RequestInfo, parent: HTMLElement) {
         super();
         this.view = new RequestListElementView();
         this.request = request;
+        this.parent = parent;
     }
 
     render(): HTMLElement {
         this.root = this.view.render(this.request);
         this.subscribe();
+        Events.updateWeightSum(this.request.reqType.Weight, this.parent);
         return this.root;
     }
 
@@ -58,6 +61,7 @@ export default class RequestListElement extends BasicComponent {
             listener: () => {
                 Queries.deleteRequest(this.request.ID).then(() => {
                     this.root.remove();
+                    Events.updateWeightSum(-this.request.reqType.Weight);
                     if (document.getElementsByClassName("request_list__element").length == 0) {
                         const element = new RequestListElementEmptyView();
                         document.querySelector(".request_list")!.appendChild(element.render());

@@ -29,7 +29,7 @@ export default class RequestList extends BasicComponent {
         }
 
         requestList.forEach((request) => {
-            const element = new RequestListElement(request);
+            const element = new RequestListElement(request, this.root);
             this.root.appendChild(element.render());
             this.elements.push(element);
         });

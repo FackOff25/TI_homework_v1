@@ -31,6 +31,10 @@
       border-style: solid !important;  
       font-size: 25px;
       padding: 10px;
+
+      &__left_child{
+        margin-right: auto;
+      }
     }
     
     &__left{
